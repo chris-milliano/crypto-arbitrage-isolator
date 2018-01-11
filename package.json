@@ -1,0 +1,22 @@
+{
+  "name": "crypto-arbitrage-isolator",
+  "version": "1.0.0",
+  "description": "Use CoinMarketCap API to find coins that appear disproportionately below their recent average market value",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "crypto",
+    "arbitrage",
+    "isolator"
+  ],
+  "author": "Chris Milliano <millianoc@gmail.com> (iamchris.digital)",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.16.2",
+    "https": "^1.0.0",
+    "request": "^2.83.0"
+  }
+}
