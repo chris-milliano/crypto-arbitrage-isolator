@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Crypto Arbitrage Isolator</title>
+
+    <style>
+
+        .container {
+            box-sizing: border-box;
+            width: 100%;
+            margin: 0 auto;
+            overflow-y: auto;
+        }
+
+        header {
+            text-align: center;
+            border-bottom: 3px solid #727272;
+        }
+
+        main {
+            background-color: #0f0;
+        }
+
+        footer {
+            text-align: center;
+            border-top: 3px solid #000;
+            background-color: #727272;
+            color: #fff;
+        }
+
+    </style>
+
+</head>
+<body onload="onload()" class="container">
+
+    <header class="container">
+        <h1>Crypto Arbitrage Isolator</h1>
+    </header>
+
+    <main class="container">
+        <h3>Coins...</h3>
+    </main>
+
+    <footer class="container">
+        <h4>Send ETH for beer!</h4>
+    </footer>
+
+
+    <script>
+
+        // Hold vars
+        const baseApiUrl = 'https://api.coinmarketcap.com/v1/ticker';
+        let numCoins = 0;
+        let avg_1h_percent_change = 0;
+        let avg_24h_percent_change = 0;
+        let avg_7d_percent_change = 0;
+        let coins;
+
+
+        //
+        function handleCMCData (data) {
+            // Hold basic response info
+            coins = JSON.parse(data);
+            numCoins = coins.length;
+            
+
+            // Sum each coin's changes
+            for (let coin of coins) {
+                console.log(coin);
+
+                let coin_1h = parseFloat(coin.percent_change_1h);
+                let coin_24h = parseFloat(coin.percent_change_24h);
+                let coin_7d = parseFloat(coin.percent_change_7d);
+
+                // If the coin has required vars
+                if (coin_1h && coin_24h && coin_7d) {
+
+                    avg_1h_percent_change += coin_1h;
+                    avg_24h_percent_change += coin_24h;
+                    avg_7d_percent_change += coin_7d;
+                    console.log(coin.symbol, coin_1h, coin_24h, coin_7d);
+                }
+
+                // Otherwise skip it
+                else {
+                    console.log(coin.symbol, "NaN");
+                    numCoins--;
+                }
+            }
+
+            // Take the average percent changes
+            avg_1h_percent_change /= numCoins;
+            avg_24h_percent_change /= numCoins;
+            avg_7d_percent_change /= numCoins;
+
+            //
+            console.log(`numCoins: ${numCoins}`);
+            console.log(`Avg 1h change: ${avg_1h_percent_change}`);
+            console.log(`Avg 24h change: ${avg_24h_percent_change}`);
+            console.log(`Avg 7d change: ${avg_7d_percent_change}`);
+        }
+
+
+        //
+        function httpGetAsync (url, callback) {
+            var xmlHttp = new XMLHttpRequest();
+            xmlHttp.onreadystatechange = function() {
+                if (xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                    console.log("call out");
+                    callback(xmlHttp.responseText);
+                }
+            }
+            xmlHttp.open("GET", url, true); // true for asynchronous
+            xmlHttp.send(null);
+        }
+
+
+        //
+        function onload() {
+
+            let getUrl = `${baseApiUrl}/?limit=1000`;
+            console.log(`onload(${getUrl})`);
+            httpGetAsync (getUrl, handleCMCData);
+        }
+
+    </script>
+
+</body>
+</html>
